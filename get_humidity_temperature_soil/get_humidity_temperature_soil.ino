@@ -22,7 +22,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <avr/sleep.h>
 
-#define DEBUG 1
+//#define DEBUG 1
 #define pinDH11 6
 #define pinButton 2
 #define pinDeepSensor A0
@@ -36,8 +36,9 @@ DHT_Unified dht11(pinDH11, DHT11SENSOR);
 uint32_t delayMS;
 
 void wakeUp() {
+  Serial.println("wake up");
   sleep_disable();
-  detachInterrupt(0);
+  //detachInterrupt(0);
 }
 
 int convertToPercent(int value)
@@ -49,6 +50,9 @@ int convertToPercent(int value)
 
 void going_to_Sleep()
 {
+#ifdef DEBUG
+  Serial.println("going to sleep");
+#endif
   sleep_enable();
   attachInterrupt(0, wakeUp, HIGH);
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
@@ -94,6 +98,9 @@ void going_to_Sleep()
   }
   else {
     String humid = "Humid: " + String(event.relative_humidity) + " %";
+#ifdef DEBUG
+    Serial.println(humid);
+#endif
     lcd.setCursor(0,1);
     lcd.print(humid);
   }
@@ -105,17 +112,39 @@ void going_to_Sleep()
     delay(1);
   }
   sensorReading = sensorReading/100.00;
+#ifdef DEBUG
+  Serial.println(sensorReading);
+#endif
   lcd.clear();
   lcd.setCursor(0,0);
   lcd.print(sensorReading);
   lcd.setCursor(0,1);
   lcd.print(convertToPercent(sensorReading));
-  delay(10000);
+  delay(5000);
+  sensorReading = 0;
+  for(int i = 0; i< 100; i++)
+  {
+    sensorReading +=analogRead(pinDeepSensor);
+    delay(1);
+  }
+  sensorReading = sensorReading/100.00;
+#ifdef DEBUG
+  Serial.println(sensorReading);
+#endif
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print(sensorReading);
+  lcd.setCursor(0,1);
+  lcd.print(convertToPercent(sensorReading));
+  delay(5000);
+  lcd.noBacklight();
+  lcd.clear();
 }
 
 void setup() {
 #ifdef DEBUG
     Serial.begin(9600);
+    Serial.println("starting");
 #endif
   lcd.begin();
   lcd.noBacklight();
@@ -129,6 +158,5 @@ void setup() {
 }
 
 void loop() {
-  delay(5000);
   going_to_Sleep();
 }
