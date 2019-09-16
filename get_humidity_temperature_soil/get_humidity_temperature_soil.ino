@@ -23,7 +23,7 @@
 #include <avr/sleep.h>
 
 //#define DEBUG 1
-#define pinDH11 6
+#define pinDH11 3
 #define pinButton 2
 #define pinDeepSensor A0
 #define DHT11SENSOR DHT11
