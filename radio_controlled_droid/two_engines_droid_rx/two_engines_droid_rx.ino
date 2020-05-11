@@ -24,9 +24,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 #define RIGHT_MOTOR_PIN1 10
 #define RIGHT_MOTOR_PIN2 11
 #define PIN_RX 8
-char inData[20];
+#define BUFFER 40
+#define MINIMUM_POWER 170
+char inData[BUFFER];
+char xData[BUFFER];
+char yData[BUFFER];
 
 #define DEBUG_MODE true
+//#define DISABLE_ENGINES true
 void setup() {
 #ifdef DEBUG_MODE
   Serial.begin(9600);
@@ -47,6 +52,7 @@ void setup() {
 * Move the platform in predefined directions.
 */
 void go(int speedLeft, int speedRight) {
+#ifndef DISABLE_ENGINES
   if (speedLeft == 0 && speedRight == 0 ) {
     digitalWrite(LEFT_MOTOR_PIN1,LOW);
     digitalWrite(LEFT_MOTOR_PIN2,LOW);
@@ -84,15 +90,101 @@ void go(int speedLeft, int speedRight) {
 #ifdef DEBUG_MODE
     Serial.print("Right "); Serial.print(0); Serial.print(" "); Serial.println(-speedRight);
 #endif    
+  }
+#endif
+}
 
+void moveX() {
+  int power;
+  for (unsigned int i = 0 ; i < strlen(inData); i++) {
+     inData[i]=inData[i+1];
+  }
+  power = atoi(inData);
+#ifdef DEBUG_MODE    
+  Serial.print("Move linear with power ");Serial.println(power);
+#endif
+  go(power,power);
+}
+
+void moveY() {
+  int power;
+  for (unsigned int i = 0 ; i < strlen(inData); i++) {
+     inData[i]=inData[i+1];
+  }
+  power = atoi(inData);
+#ifdef DEBUG_MODE
+  Serial.print("Turn on spot with power ");Serial.println(power);
+#endif
+  if (power > 0) { //right
+     go(power,-power);
+  } else {
+     go(power, -power);
+  }
+}
+
+int normalizeLower(int power) {
+  if (power < -MINIMUM_POWER) {
+      return  -MINIMUM_POWER;
+  } else if (power > 0 && power < MINIMUM_POWER) {
+      return  MINIMUM_POWER;
+  } else  {
+    return power;
+  }
+}
+void moveWithTurn() {
+  for (unsigned int i = 0 ; i < strlen(inData); i++) {
+     inData[i]=inData[i+1];
+  }
+  int xLength = 0;
+  int yLength = 0;
+  boolean isY = false;
+  for (unsigned int i = 0 ; i < strlen(inData); i++) {
+     if (inData[i]==',') {
+        xData[xLength]='\0';
+        isY = true;
+     }
+     if (!isY) {
+        xData[xLength] = inData[i];
+        xLength++;
+     } else if (inData[i] != ',') {
+        yData[yLength] = inData[i];
+        yLength++;
+     }
+  }
+  yData[yLength]='\0';
+  int powerX = atoi(xData);
+  int powerY = atoi(yData);
+  if (powerY > 0) { 
+    //turn right
+    if (powerX > 0 ) {
+      //move forward
+#ifdef DEBUG_MODE
+  Serial.print("Move forward right : left=");Serial.print(powerX);Serial.print(" right=");Serial.println(normalizeLower(labs(powerX-powerY/2)));
+#endif      
+     go(powerX,normalizeLower(labs(powerX-powerY/2)));
+    } else {
+      
+    }
+  } else {
+    //turn left
+    if (powerX > 0) {
+      //move forward
+#ifdef DEBUG_MODE
+  Serial.print("Move forward left : left=");Serial.print(normalizeLower(labs(powerX+powerY/2)));Serial.print(" right=");Serial.println(powerX);
+#endif      
+     go(normalizeLower(labs(powerX+powerY/2)),powerX);
+    } else {
+      
+    }
   }
 }
 
 void loop() {
-  uint8_t bufLen = 20;
-  int power;
-  for(int i =0; i< bufLen; i++) {
+  uint8_t bufLen = BUFFER;
+  for(int i = 0; i < BUFFER; i++) {
     inData[i]='\0';
+    xData[i]='\0';
+    yData[i]='\0';
   }
   if(!vw_get_message(inData,&bufLen)) {
     return;
@@ -107,33 +199,11 @@ void loop() {
     go(0,0);
   } else if (strlen(inData) > 1) {
     if (inData[0] == 'x') {
-      for (unsigned int i = 0 ; i < strlen(inData); i++) {
-        inData[i]=inData[i+1];
-      }
-      power = 510 - atoi(inData);
-      power = power/2;
-      if (power > 255) {
-          power = 255;
-      } else if (power < -255) {
-          power = -255;
-      }
-      go(power,power);
+      moveX();
     } else if (inData[0] == 'y') {
-      for (unsigned int i = 0 ; i < strlen(inData); i++) {
-        inData[i]=inData[i+1];
-      }
-      power = atoi(inData) - 538;
-      power = power/2;
-      if (power > 255) {
-          power = 255;
-      } else if (power < -255) {
-          power = -255;
-      }
-      if (power > 0) { //right
-         go(power,-power);
-      } else {
-        go(power, -power);
-      }
+      moveY();
+    } else if (inData[0] == 'c') {
+      moveWithTurn();
     }
   }
 }
