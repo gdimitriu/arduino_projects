@@ -25,18 +25,23 @@
  * for analogic output pin (3) direct to A0
  * for digital resitor 10k between output (3) and vcc and to 7
  * 
+ * 
  * PhotoRezistor: 
  * VCC to photresistor first pin
  * photoresistor second pin to A0
  * photoresistor second pin to rezistor 10k first pin
  * resistor second pin to GND
+ * http://www.instructables.com/id/How-to-use-a-photoresistor-or-photocell-Arduino-Tu/
  *
  *Photorezistor and photodiode are almost the same
+ * http://www.instructables.com/id/How-to-use-a-photoresistor-or-photocell-Arduino-Tu/
  * PhotoTransistor:
  * longer pin to vcc
  * shorter pin to first pin 470k/10k rezistor and to A0
  * second pin of rezistor to gnd
  * PhotoDiode works:
+ * https://electronics.stackexchange.com/questions/33659/how-do-i-connect-a-photodiode
+ * https://electronics.stackexchange.com/questions/229414/photodiode-circuit-for-measuring-light-intensity
  * shorter pin to gnd
  * longer pin to first pin 2k rezistor and to A0
  * second pin of rezistor to vcc
@@ -45,6 +50,15 @@
  * first pin of termistor to vcc
  * second pin of temistor to first pin of rezistor (10k) and to A0
  * second pin of rezistor to gnd
+ * http://www.circuitbasics.com/arduino-thermistor-temperature-sensor-tutorial/
+ * 
+ * interrupts and keypad
+ * http://gammon.com.au/interrupts
+ * http://playground.arduino.cc//Main/PinChangeIntExample
+ * https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
+ * https://forum.arduino.cc/index.php?topic=268805.0
+ * https://playground.arduino.cc/Main/KeypadTutorial
+
  */
 #include <EnableInterrupt.h>
 

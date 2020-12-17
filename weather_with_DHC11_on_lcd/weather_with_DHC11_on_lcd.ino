@@ -16,6 +16,26 @@
   along with Arduino Projects; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 */
+/*
+ * HUMIDITY
+ * https://github.com/adafruit/Adafruit_Sensor
+ * https://github.com/winlinvip/SimpleDHT
+ * https://github.com/adafruit/DHT-sensor-library
+ * https://learn.adafruit.com/dht/downloads
+ * https://create.arduino.cc/projecthub/electropeak/complete-guide-to-use-soil-moisture-sensor-w-examples-756b1f
+ * https://www.instructables.com/id/Arduino-Soil-Moisture-Sensor/
+ * https://create.arduino.cc/projecthub/MisterBotBreak/how-to-use-a-soil-moisture-sensor-ce769b
+ * https://learn.sparkfun.com/tutorials/soil-moisture-sensor-hookup-guide/all
+ * http://www.electronics-lab.com/project/using-soil-moisture-sensor-arduino/
+ * https://maker.pro/arduino/projects/arduino-soil-moisture-sensor
+ * 
+ * interrupts and keypad
+ * http://gammon.com.au/interrupts
+ * http://playground.arduino.cc//Main/PinChangeIntExample
+ * https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
+ * https://forum.arduino.cc/index.php?topic=268805.0
+ * https://playground.arduino.cc/Main/KeypadTutorial
+ */
 #include <Adafruit_Sensor.h>
 #include <DHT_U.h>
 #include <LiquidCrystal.h>
