@@ -22,17 +22,12 @@
 #include <SoftwareSerial.h>
 
 TinyGPS gps;
-LiquidCrystal_I2C  lcd (0x27, 16,2);              //LCD driver pins
-int led = 13;
+LiquidCrystal_I2C  lcd (0x3f, 20,4);
 
 SoftwareSerial mySerial(3, 2);
 
 long lat, lon;
 unsigned long fix_age, time, date, speed, course;
-unsigned long chars;
-unsigned short sentences, failed_checksum;
-//int year;
-//byte month, day, hour, minute, second, hundredths;
 
 int DEG;
 int MIN1;
@@ -71,10 +66,7 @@ void LON(){                        //Longitude state
 
 void setup()
 {
-  Serial.begin(115200);
-  mySerial.begin(9600);            //Set the GPS baud rate.
-  pinMode(led, OUTPUT);  
-  Serial.println("Adafruit GPS library basic test!");
+  mySerial.begin(921600);            //Set the GPS baud rate.
   lcd.begin();               // start the library
   lcd.backlight();
   lcd.setCursor(0,0);             // set the LCD cursor   position 
@@ -86,24 +78,22 @@ void loop()
 {
   while (mySerial.available())
   {
-    digitalWrite(led, HIGH);
     int c = mySerial.read();                   // Read the GPS data
     if (gps.encode(c))                        // Check the GPS data
     {
       // process new gps info here
     }
-    Serial.print(c);
   }
-  Serial.println("done");
-  digitalWrite(led, LOW);
   gps.get_position(&lat, &lon, &fix_age);     // retrieves +/- lat/long in 100000ths of a degree
-  Serial.print(lat); Serial.print(":"); Serial.println(lon);
+  lcd.setCursor(0,2);
+  lcd.print("Lat:");
+  lcd.print(lat);
+  lcd.setCursor(0,3);
+  lcd.print("Long:");
+  lcd.print(lon);
   gps.get_datetime(&date, &time, &fix_age);   // time in hhmmsscc, date in ddmmyy
-  Serial.print(date); Serial.print(":time:"); Serial.println(time);
-  //gps.crack_datetime(&year, &month, &day,    //Date/time cracking
-  //&hour, &minute, &second, &hundredths, &fix_age);  
 
 LAT();
 LON();
-
+  delay(1000);
 }
