@@ -1,6 +1,6 @@
 #include <avr/sleep.h>
 
-#define DEBUG 1
+//#define DEBUG 1
 #define SENSOR_PIN 2
 #define SERVO_PIN 3
 void wakeUp() {
@@ -25,7 +25,7 @@ void going_to_Sleep()
   analogWrite(SERVO_PIN,255);
   delay(5*1000); //5s
   analogWrite(SERVO_PIN,0);
-  delay(30*1000); //30s
+  delay(15*1000); //30s
 }
 
 void setup() {
