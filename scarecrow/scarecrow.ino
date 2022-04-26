@@ -19,9 +19,10 @@ void going_to_Sleep()
   sleep_enable();
   attachInterrupt(0, wakeUp, HIGH);
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-  digitalWrite(LED_BUILTIN, LOW);
   delay(1000);
+  digitalWrite(LED_BUILTIN, LOW);
   sleep_cpu();
+  digitalWrite(LED_BUILTIN, HIGH);
   analogWrite(SERVO_PIN,255);
   delay(5*1000); //5s
   analogWrite(SERVO_PIN,0);
