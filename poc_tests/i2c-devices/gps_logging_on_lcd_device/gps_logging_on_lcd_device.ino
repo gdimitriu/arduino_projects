@@ -25,11 +25,12 @@ long latitude = 0;
 long longitude = 0;
 unsigned long fix_age = 0;
 
-LiquidCrystal_I2C lcd (0x3f, 20,4);
+LiquidCrystal_I2C lcd (0x27, 16,2);
 TinyGPS gps;
 SoftwareSerial mySerial(3, 2);
 
 void setup() {
+  Serial.begin(9600);
   mySerial.begin(9600);
   lcd.begin();
   lcd.backlight();
