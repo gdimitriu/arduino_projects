@@ -1,6 +1,6 @@
 /*
-  HMC5983 compass heading on IC2 LCD
-  Copyright 2023 Gabriel Dimitriu
+  QMC5883L compass azimuth on IC2 LCD
+  Copyright 2024 Gabriel Dimitriu
 
   This file is part of Arduino Projects
 
@@ -18,40 +18,34 @@
 */
 #include <Wire.h> //I2C Arduino Library
 #include <LiquidCrystal_I2C.h>
-#include <HMC5983.h>
+#include <QMC5883LCompass.h>
 
 //LiquidCrystal_I2C  lcd (0x3f, 20,4);
 LiquidCrystal_I2C  lcd (0x27, 16,2);
-HMC5983 compass;
-boolean compass_rdy = false;
-
-void readCompass_ISR() {
-  compass_rdy = true;
-}
-
+QMC5883LCompass compass;
 void setup(){
   Wire.begin();
   lcd.begin();               // start the library
   lcd.backlight();
   lcd.setCursor(0,0);
-  while (!compass.begin(NULL, 0)) {
-    lcd.print("HMC5983 Problem");
-    delay(500);
-    lcd.setCursor(0,0);
-  }
-  compass.setMeasurementMode(HMC5983_CONTINOUS);
+  compass.init();
+  lcd.print("Calibration");
+  lcd.setCursor(0,0);
   lcd.clear();
-  
+  compass.setCalibrationOffsets(compass.getCalibrationOffset(0), compass.getCalibrationOffset(1), compass.getCalibrationOffset(2));
+  compass.setCalibrationScales(compass.getCalibrationScale(0), compass.getCalibrationScale(1), compass.getCalibrationScale(2));
+  lcd.setCursor(0,1);
+  lcd.print("Azimuth: ");
 }
 void loop()
 {
-//  if (compass_rdy) {
-//    compass_rdy = false;
-    double heading = compass.read();
+    compass.read();
+    int azimuth = compass.getAzimuth();
     //lcd.clear();
-    lcd.setCursor(0,1);
-    lcd.print("Heading: ");
-    lcd.print(heading);//-6.06666 to real nord
+//    lcd.setCursor(9,1);
+//    lcd.print("       ");
+//    delay(25);
+    lcd.setCursor(9,1);
+    lcd.print(azimuth);
     delay(25);
-//  }
 }
