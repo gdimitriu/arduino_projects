@@ -18,7 +18,7 @@
 
 Ucglib_ILI9341_18x240x320_HWSPI ucg(/*cd=*/ DC_LCD , /*cs=*/ CS_LCD, /*reset=*/ RST_LCD);
 
-char fileName[] = "testLCD.txt"; // SD library only supports up to 8.3 names
+char fileName[] = "tests/LCD.txt"; // SD library only supports up to 8.3 names
 File fd;
 bool alreadyBegan = false;  // SD.begin() misbehaves if not first call
 char fileBuffer[256];
